@@ -51,6 +51,7 @@ func NewTemplateConfigListener(bus event.Bus,
 	bus.Subscribe(event.OptionUpdateEventName, t.HandleOptionUpdateEvent)
 	bus.Subscribe(event.StartEventName, t.HandleStartEvent)
 	bus.Subscribe(event.ThemeActivatedEventName, t.HandleThemeUpdateEvent)
+	bus.Subscribe(event.ThemeFileUpdatedEventName, t.HandleThemeFileUpdateEvent)
 }
 
 func (t *TemplateConfigListener) HandleThemeUpdateEvent(ctx context.Context, themeUpdateEvent event.Event) error {
@@ -66,6 +67,10 @@ func (t *TemplateConfigListener) HandleUserUpdateEvent(ctx context.Context, user
 }
 
 func (t *TemplateConfigListener) HandleOptionUpdateEvent(ctx context.Context, optionUpdateEvent event.Event) error {
+	err := t.loadThemeConfig(ctx)
+	if err != nil {
+		return err
+	}
 	return t.loadOption(ctx)
 }
 
